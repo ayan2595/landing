@@ -1,137 +1,39 @@
 <template>
   <div id="App" class="main-container">
     <div class="body-container">
-      <div class="left-container">
-        <img :src="require('@/assets/logo.png')" class="logo" />
-        <div class="small-left-container-body">
-          <div class="left-header-container">
-            <div class="left-header-text">Get The App</div>
-          </div>
-          <Button
-            iconName="cloud-arrow-down"
-            title="Download"
-            id="Download Button"
-          />
-          <div class="small-print-container">
-            <div class="small-print-text">* small print text</div>
-          </div>
-        </div>
-      </div>
+      <LeftContent />
       <div class="main-body">
-        <div class="main-element">
-          <div class="header">
-            <div class="header-text">hp</div>
-            <div class="header-text" style="margin: 0 10px">.</div>
-            <div class="header-text">coming soon</div>
-          </div>
-          <div class="body-text">
-            Our new location based app is launching soon, please use the form
-            below to register your profile for the Hot Places app.
-          </div>
-          <pre />
-          <div class="body-text">
-            Lorum Ipsum nibh euismod tincidunt ut laoreet dolore magna aliquam
-            erat volutpat.
-          </div>
-        </div>
+        <MainContent />
         <form class="toggle-body" @submit.prevent>
           <div class="toggled-element" v-if="showRegistration">
             <div class="upper-form-grid-container">
-              <div class="grid-item">
-                <div class="input-header">
-                  <p class="body-text">First Name</p>
-                  <p class="required-text-marker">*</p>
-                </div>
-
-                <div class="input-container">
-                  <input v-model="firstname" class="text-input" />
-                  <fa
-                    :color="
-                      firstname.length && /^[a-zA-Z]+$/.test(firstname)
-                        ? 'green'
-                        : 'red'
-                    "
-                    icon="circle-check"
-                    class="icons"
-                  />
-                </div>
-              </div>
-              <div class="grid-item">
-                <div class="input-header">
-                  <p class="body-text">Last Name</p>
-                  <p class="required-text-marker">*</p>
-                </div>
-
-                <div class="input-container">
-                  <input v-model="lastname" class="text-input" />
-                  <fa
-                    :color="
-                      lastname.length && /^[a-zA-Z]+$/.test(lastname)
-                        ? 'green'
-                        : 'red'
-                    "
-                    icon="circle-check"
-                    class="icons"
-                  />
-                </div>
-              </div>
-              <div class="grid-item">
-                <div class="input-header">
-                  <p class="body-text">Email</p>
-                  <p class="required-text-marker">*</p>
-                  <p class="validation-text">Please enter a valid email</p>
-                </div>
-
-                <div class="input-container">
-                  <input v-model="email" class="text-input" type="email" />
-                  <fa
-                    :color="
-                      email.length &&
-                      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(
-                        email
-                      )
-                        ? 'green'
-                        : 'red'
-                    "
-                    icon="circle-check"
-                    class="icons"
-                  />
-                </div>
-              </div>
-            </div>
-            <div>
-              <div class="input-header">
-                <p class="body-text">Photo</p>
-                <p class="required-text-marker">*</p>
-              </div>
-              <img
-                v-if="image"
-                :src="image"
-                width="100"
-                height="150"
-                class="photo-preview"
+              <InputField
+                :text="firstname"
+                @input="firstname = $event.target.value"
+                header="First Name"
+                :isValid="regexTest(firstname)"
               />
-              <div
-                v-else
-                class="photo-input"
-                @dragover="onDrag"
-                @drop="onDrop"
-                @dragleave="onDragLeave"
-              >
-                <div class="photo-input-text">Drop files here to upload</div>
-              </div>
-              <p class="small-print-text">
-                Note: Image formats only e.g. jpg, png, gif, tif
-              </p>
-            </div>
+              <InputField
+                :text="lastname"
+                @input="lastname = $event.target.value"
+                header="Last Name"
+                :isValid="regexTest(lastname)"
+              />
 
+              <InputField
+                :text="email"
+                @input="email = $event.target.value"
+                header="Email"
+                :isValid="regexTestEmail(email)"
+              />
+            </div>
+            <PhotoUploader />
             <Button
               iconName="user"
               :title="`Hey ${firstname}, Save your Profile`"
               id="Save Button"
             />
           </div>
-
           <Button
             iconName="user"
             title="Register for our new app"
@@ -148,28 +50,25 @@
 <script setup>
 import { ref } from "vue";
 import Button from "@/components/Button.vue";
+import LeftContent from "./components/LeftContent.vue";
+import MainContent from "./components/MainContent.vue";
+import InputField from "./components/InputField.vue";
+import PhotoUploader from "./components/PhotoUploader.vue";
 const showRegistration = ref(false);
 const firstname = ref("");
 const lastname = ref("");
 const email = ref("");
-const image = ref();
-const fileTypes = [".jpg", ".png", ".gif", ".tif"];
+
 const toggle = () => {
   showRegistration.value = true;
 };
-const onDrop = (event) => {
-  event.preventDefault();
-  const file = event.dataTransfer.files[0];
-  const fileType = file.name.split(".").pop();
-  if (fileTypes.includes(`.${fileType}`))
-    image.value = URL.createObjectURL(event.dataTransfer.files[0]);
-  else alert("Please enter one of the specified file types");
+
+const regexTest = (value) => {
+  return /^[a-zA-Z]+$/.test(value);
 };
-const onDrag = (event) => {
-  event.preventDefault();
-};
-const onDragLeave = (event) => {
-  event.preventDefault();
+
+const regexTestEmail = (value) => {
+  return /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value);
 };
 </script>
 

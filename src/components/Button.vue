@@ -8,6 +8,7 @@
     </div>
   </button>
 </template>
+
 <script setup>
 import { defineProps } from "vue";
 defineProps({ title: String, iconName: String, id: String });
